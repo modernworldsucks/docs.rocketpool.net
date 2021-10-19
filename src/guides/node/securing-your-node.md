@@ -202,10 +202,22 @@ You can now type `loadkey` **on your client machine** to load the key.
 Once you have your SSH key pair, you can now add the **public key** to your node.
 This will let you connect to it over `ssh` using the private key you just generated, instead of your username and password.
 
-There are two ways to do this - if one doesn't work, try the other way:
+You may first need to create the file where the key will be stored on your node machine. If the folder already exists, then the following will set the correct access level
+
+To this, use `ssh` to access your node and go through the following in sequence (`mkdir` creates new directories if they do not already exist, `touch` will create the file in this instance, whilst `chmod` is used to set the access level of the created folders)
+
+```shell
+cd
+mkdir .ssh
+touch .ssh/authorized_keys
+chmod 700 .ssh
+chmod 600 .ssh/authorized_keys
+```
+
+There are multiple ways to continue afterwards - if one doesn't work, try the other ways:
 
 :::: tabs
-::: tab Using ssh-copy-id
+::: tab Using ssh-copy-id (linux/mac)
 Run the following command **on your client machine**:
 
 ```shell
@@ -244,7 +256,7 @@ and check to make sure that only the key(s) you wanted were added.
 That means it worked!
 
 :::
-::: tab Manually Adding the Key
+::: tab Manually Adding the Key (linux/mac/windows)
 Start by getting the contents of the **public key** - run this command **on your client machine**:
 
 ```shell
@@ -275,6 +287,19 @@ In this file, paste the **public key** that you retrieved a few steps ago using 
 When it's in, save the file with `Ctrl+O` and `Enter`, then press `Ctrl+X` to exit.
 
 Now, exit `ssh` by running the `exit` command so you return back to your local client machine's terminal. 
+
+:::
+::: tab Copying the SSH key (windows)
+Run this command **on your client machine** depending on where the Public Key was saved:
+```shell
+type C:\Users\USERPROFILE\.ssh\id_ed25519.pub | ssh {username@node.ip.address} "cat >> .ssh/authorized_keys"
+```
+
+For example, if my username on the node was `staker` and my node's IP address was `192.168.1.10`, I would run the following command:
+```shell
+type C:\Users\USERPROFILE\.ssh\id_ed25519.pub | ssh {staker@192.168.1.10} "cat >> .ssh/authorized_keys"
+```
+It will then prompt you for the password of the user on your node machine. (Note that this is not the password of the SSH key!)
 ::::
 
 You should now be able to `ssh` into the node like you normally would, but now you won't have to type the password of the user account.
